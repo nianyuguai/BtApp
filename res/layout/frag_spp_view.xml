@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frag_spp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="#C3C6CB">
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+    	android:orientation="vertical"
+    	android:background="@drawable/frag_bg_shape" >
+    	<Button 
+    	    android:id="@+id/search_btn"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="40dp"
+    	    android:text="@string/search_btn"/>
+    </LinearLayout> 
+    
+    <LinearLayout 
+        android:id="@+id/device_info_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:visibility="gone"
+    	android:orientation="vertical"
+    	android:background="@drawable/frag_bg_shape">
+    	
+        <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	    	android:orientation="horizontal"
+	    	>
+	    	<TextView
+	            android:layout_width="0dp"
+	        	android:layout_height="wrap_content"
+	        	android:layout_weight="1"
+	        	android:layout_marginTop="8dip"
+	        	android:layout_marginLeft="8dip"
+	        	android:layout_marginBottom="8dip"
+	        	android:text="@string/device_str"
+	        	android:textSize="14sp"/>
+	    	<ProgressBar 
+	    	    android:id="@+id/search_pb"
+	    	    android:layout_width="wrap_content"
+	        	android:layout_height="match_parent"
+	        	android:layout_gravity="center_vertical"
+	        	android:layout_marginTop="5dip"
+	        	android:layout_marginBottom="5dip"
+	        	android:text="@string/device_str"
+	        	android:visibility="gone"
+	        	/>
+        </LinearLayout>
+        
+       
+        <View
+	        android:layout_width="wrap_content"
+	        android:layout_height="1dip"
+			android:layout_marginLeft="5dp"
+			android:layout_marginRight="5dp"
+	        android:background="#DDDEE1" />
+	    <ListView 
+	        android:id="@+id/device_lv"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="5dp"
+	        android:layout_marginTop="5dp"
+	        android:layout_marginRight="5dp"
+	        android:background="@drawable/frag_bg_shape">
+	        
+	    </ListView>
+	    
+	    
+    </LinearLayout>
+    
+    
+</LinearLayout>

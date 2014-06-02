@@ -8,16 +8,18 @@
         android:layout_width="match_parent"
     	android:layout_height="40dp"
     	android:gravity="center"
+    	android:textColor="#BDB4AB"
   		/>
     
     <ImageView 
         android:id="@+id/tabmenu_iv"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="3dp"
         android:layout_below="@id/tabmenu_tv"
         android:gravity="center"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_launcher"
         android:contentDescription="@string/iv_txt"
         />
 

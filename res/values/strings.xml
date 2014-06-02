@@ -6,4 +6,14 @@
     <string name="hello_world">Hello world!</string>
 	
     <string name="iv_txt">image</string>
+    
+    <string name="spp_str">SPP</string>
+    <string name="other_str">其他</string>
+    <string name="device_str">设备信息</string>
+    <string name="none_found_str">设备没找到</string>
+    
+     <string name="another_str">还没其他</string>
+     
+     <string name="bt_search">断开</string>
+     <string name="search_btn">搜索</string>
 </resources>

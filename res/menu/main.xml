@@ -5,5 +5,9 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
-
+<!-- 	<item
+	    android:id="@+id/bt_search"
+        android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/search_bt"
+        android:title="@string/bt_search"/> -->
 </menu>
