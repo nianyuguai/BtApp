@@ -45,13 +45,22 @@
 	        	android:layout_marginBottom="8dip"
 	        	android:text="@string/device_str"
 	        	android:textSize="14sp"/>
+	    	<TextView 
+	    	    android:id="@+id/bt_status"
+	    	    android:layout_width="wrap_content"
+	        	android:layout_height="match_parent"
+	    	    android:layout_marginTop="9dip"
+	    	    android:layout_marginRight="5dp"
+	        	android:layout_marginBottom="9dip"
+	        	android:textColor="#92959A"
+	        	android:textSize="12sp"/>
 	    	<ProgressBar 
 	    	    android:id="@+id/search_pb"
 	    	    android:layout_width="wrap_content"
 	        	android:layout_height="match_parent"
 	        	android:layout_gravity="center_vertical"
-	        	android:layout_marginTop="5dip"
-	        	android:layout_marginBottom="5dip"
+	        	android:layout_marginTop="5dp"
+	        	android:layout_marginBottom="5dp"
 	        	android:text="@string/device_str"
 	        	android:visibility="gone"
 	        	/>
