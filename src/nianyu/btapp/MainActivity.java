@@ -71,9 +71,6 @@ public class MainActivity extends FragmentActivity {
 		tabHost.addTab(tabHost.newTabSpec("tabb").setIndicator(mv2)
 				.setContent(R.id.tab2));
 		
-		
-		
-		
 	}
 	
 	

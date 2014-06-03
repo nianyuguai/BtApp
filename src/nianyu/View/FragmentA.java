@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,15 @@ public class FragmentA extends Fragment{
 	private ArrayAdapter<String> mDeviceArrayAdapter;
 	private ListView deivce_lv;
 	private BluetoothDevice btDevice;
+	private BluetoothReceiver receiver;
+	private Context mContext;
+	
+	
+	private boolean receiver_flag  = false;
+	private boolean finish_flag = false;
+	
+	private Button mSearchBtn = null;
+	
 	private ProgressBar mSearchPb;
 	
 	private String TAG = "FragmentA";
@@ -40,7 +50,7 @@ public class FragmentA extends Fragment{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		Button mSearchBtn = null;
+		
 		super.onActivityCreated(savedInstanceState);
 		
 		final LinearLayout mDeviceInfoLl = (LinearLayout)getView().findViewById(R.id.device_info_ll);
@@ -52,26 +62,38 @@ public class FragmentA extends Fragment{
 		deivce_lv.setAdapter(mDeviceArrayAdapter);
 		//deivce_lv.setOnItemClickListener(mDeviceClickListener);
 		
-		 IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-	     getView().getContext().registerReceiver(mReceiver, filter);
-
-	        // Register for broadcasts when discovery has finished
-	     filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-	     getView().getContext().registerReceiver(mReceiver, filter);
-	     
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(BluetoothDevice.ACTION_FOUND);
+		filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+		filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+		
+		mContext = getView().getContext();
+		receiver = new BluetoothReceiver();
+		mContext.registerReceiver(receiver,filter);
+	        
+			
 	     mSearchBtn = (Button)getView().findViewById(R.id.search_btn);
-			mSearchBtn.setOnClickListener(new OnClickListener() {
+		 mSearchBtn.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					mDeviceInfoLl.setVisibility(View.VISIBLE);
 					mSearchPb.setVisibility(View.VISIBLE);
+					mDeviceArrayAdapter.clear();
+					mDeviceArrayAdapter.notifyDataSetChanged();
+					mSearchBtn.setClickable(false);
 					doDiscovery();
 				}
 			});
+		 if(!mAdapter.isEnabled()){
+			mSearchBtn.setClickable(false);
+		 }
+		 
 	}
 	
+
+
 	private void doDiscovery(){
 		if (mAdapter.isDiscovering()) {
 			mAdapter.cancelDiscovery();
@@ -79,11 +101,14 @@ public class FragmentA extends Fragment{
 		mAdapter.startDiscovery();
 	}
 	
-	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Log.i(TAG, "Receive");
+	
+    private class BluetoothReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			String action = intent.getAction();
+            
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Get the BluetoothDevice object from the Intent
@@ -91,6 +116,7 @@ public class FragmentA extends Fragment{
                 // If it's already paired, skip it, because it's been listed already
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                 	mDeviceArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                	Log.i(TAG, "Receive "+device.getName() + "  " + device.getAddress());
                 }
             // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
@@ -101,22 +127,32 @@ public class FragmentA extends Fragment{
                     String noDevices = getResources().getText(R.string.none_found_str).toString();
                     mDeviceArrayAdapter.add(noDevices);
                 }
+            }else if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+				switch(mAdapter.getState()){
+				case BluetoothAdapter.STATE_ON:
+					mSearchBtn.setClickable(true);
+					break;
+				case BluetoothAdapter.STATE_OFF:
+					mSearchBtn.setClickable(false);
+					break;
+				default:
+					break;
+				}
             }
         }
-    };
+    }
+
 
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
+		if(!receiver_flag){
+			receiver_flag = true;
+			mContext.unregisterReceiver(receiver);
+		}
+	
 		super.onDestroy();
-		
-		if (mAdapter != null) {
-            mAdapter.cancelDiscovery();
-        }
-		Log.i(TAG, "onDestroy");
-        // Unregister broadcast listeners
-        getView().getContext().unregisterReceiver(mReceiver);
 	}
     
-    
+
 }
