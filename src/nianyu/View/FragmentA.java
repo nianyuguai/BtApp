@@ -25,9 +25,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -123,19 +121,30 @@ public class FragmentA extends Fragment{
 				
 				@Override
 				public void onClick(View v) {
-					//mDeviceInfoLl.setVisibility(View.VISIBLE);
-					device_lv.setVisibility(View.VISIBLE);
-					mSearchPb.setVisibility(View.VISIBLE);
-					mMessagell.setVisibility(View.GONE);
-					SearchDao s_dao = new SearchDao(mContext);
-					s_dao.deleteAll();
-					
-					mStatusTv.setText("正在搜索");
-					mDeviceArrayAdapter.clear();
-					mDeviceArrayAdapter.notifyDataSetChanged();
-					mSearchBtn.setClickable(false);
-					
-					doDiscovery();
+					if(!mConnectFlag){
+						
+						//mDeviceInfoLl.setVisibility(View.VISIBLE);
+						device_lv.setVisibility(View.VISIBLE);
+						mSearchPb.setVisibility(View.VISIBLE);
+						mMessagell.setVisibility(View.GONE);
+						SearchDao s_dao = new SearchDao(mContext);
+						s_dao.deleteAll();
+						
+						mStatusTv.setText("正在搜索");
+						mDeviceArrayAdapter.clear();
+						mDeviceArrayAdapter.notifyDataSetChanged();
+						mSearchBtn.setClickable(false);
+						
+						doDiscovery();
+					}else{
+						if (mChatService != null) mChatService.stop();
+						mSearchBtn.setText("搜索");
+						//mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_selector));
+						mConversationArrayAdapter.clear();
+						mSearchPb.setVisibility(View.GONE);
+						mMessagell.setVisibility(View.GONE);
+						mStatusTv.setText("未连接");
+					}
 				}
 			});
 		 
@@ -429,6 +438,10 @@ public class FragmentA extends Fragment{
                            
                             mConversationArrayAdapter.clear();
                             mSearchPb.setVisibility(View.GONE);
+                            mSearchBtn.setText("断开");
+                            //mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_out_selector));
+                            mConnectFlag = true;
+                            
                             //mConnect.setText(R.string.btn_disconnect);
                             //设置连接标志
                             //mConnectFlag = true;
@@ -441,7 +454,7 @@ public class FragmentA extends Fragment{
                             //mTitle.setText(R.string.title_not_connected);
                             //mConnect.setText(R.string.btn_connect);
                           //设置连接标志
-                            //mConnectFlag = false;
+                            mConnectFlag = false;
                             break;
                     }
                     break;
