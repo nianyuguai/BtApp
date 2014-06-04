@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.WindowManager;
 import android.widget.TabHost;
 import android.widget.Toast;
 import android.widget.TabHost.OnTabChangeListener;
@@ -29,7 +30,7 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		if(D)Log.d(TAG,"-- onCreate --");
-		
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		//获取蓝牙适配器
 		if(D)Log.d(TAG,"获取蓝牙适配器");
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();		
@@ -112,7 +113,7 @@ public class MainActivity extends FragmentActivity {
 		if(keyCode == KeyEvent.KEYCODE_BACK){
 			if(isQuit == false){
 				isQuit = true;
-				Toast.makeText(getBaseContext(), "再按一次退出程序", Toast.LENGTH_LONG).show();
+				Toast.makeText(getBaseContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
 				TimerTask m_task = null;
 				m_task = new TimerTask(){
 

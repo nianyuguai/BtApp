@@ -23,11 +23,11 @@
     <LinearLayout 
         android:id="@+id/device_info_ll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
-        android:visibility="gone"
+     
     	android:orientation="vertical"
     	android:background="@drawable/frag_bg_shape">
     	
@@ -75,17 +75,51 @@
 	        android:background="#DDDEE1" />
 	    <ListView 
 	        android:id="@+id/device_lv"
+	        android:visibility="gone"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="5dp"
 	        android:layout_marginTop="5dp"
 	        android:layout_marginRight="5dp"
-	        android:background="@drawable/frag_bg_shape">
-	        
-	    </ListView>
+	        android:background="@drawable/frag_bg_shape">    
+	    </ListView> 
 	    
-	    
+	    <LinearLayout 
+	        android:id="@+id/message_ll"
+	        android:visibility="gone"
+		    android:orientation="vertical"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    >
+		    <ListView android:id="@+id/in"
+		        android:layout_width="match_parent"
+		        android:layout_height="0dp"
+		        android:stackFromBottom="true"
+		        android:transcriptMode="alwaysScroll"
+		        android:layout_weight="1"
+		    />
+		    <LinearLayout
+		        android:orientation="horizontal"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        >
+		        <EditText 
+		            android:id="@+id/edit_text_out"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1"
+		            android:layout_gravity="bottom"
+		        />
+		        <Button android:id="@+id/button_send"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/send"
+		        />
+		    </LinearLayout>
+		</LinearLayout>
     </LinearLayout>
+    
+    
     
     
 </LinearLayout>
