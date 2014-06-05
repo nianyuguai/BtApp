@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:id="@+id/btn_selector">
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
     <!-- 指定按钮按下时显示的图片 -->
 	<item
 	    android:state_pressed="true"

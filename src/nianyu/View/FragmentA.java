@@ -35,6 +35,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,12 +55,16 @@ public class FragmentA extends Fragment{
 	
 	private boolean mConnectFlag = false;
 	private boolean receiver_flag  = false;
+	private boolean search_flag = false;
+	
 	private Button mSearchBtn = null;
 	private TextView mStatusTv = null;
 	private EditText mOutEditText;
     private Button mSendButton;
 	private ProgressBar mSearchPb;
 	private LinearLayout mMessagell;
+	private LinearLayout mMessagell2;
+	private TabWidget mTab;
 	
 	private StringBuffer mOutStringBuffer;
 	private String mConnectedDeviceName;
@@ -89,6 +94,7 @@ public class FragmentA extends Fragment{
 		super.onActivityCreated(savedInstanceState);
 		
 		mMessagell = (LinearLayout)getView().findViewById(R.id.message_ll);
+		mMessagell2 = (LinearLayout)getView().findViewById(R.id.message_ll2);
 		mSearchPb = (ProgressBar)getView().findViewById(R.id.search_pb);
 		
 		mStatusTv = (TextView)getView().findViewById(R.id.bt_status);
@@ -115,34 +121,41 @@ public class FragmentA extends Fragment{
 		receiver = new BluetoothReceiver();
 		mContext.registerReceiver(receiver,filter);
 	        
-			
-	     mSearchBtn = (Button)getView().findViewById(R.id.search_btn);
-		 mSearchBtn.setOnClickListener(new OnClickListener() {
+		mTab = (TabWidget)getActivity().findViewById(android.R.id.tabs);
+	    mSearchBtn = (Button)getView().findViewById(R.id.search_btn);
+		mSearchBtn.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
 					if(!mConnectFlag){
-						
+						if(!search_flag){
 						//mDeviceInfoLl.setVisibility(View.VISIBLE);
 						device_lv.setVisibility(View.VISIBLE);
 						mSearchPb.setVisibility(View.VISIBLE);
 						mMessagell.setVisibility(View.GONE);
+						mMessagell2.setVisibility(View.GONE);
 						SearchDao s_dao = new SearchDao(mContext);
 						s_dao.deleteAll();
 						
 						mStatusTv.setText("正在搜索");
 						mDeviceArrayAdapter.clear();
 						mDeviceArrayAdapter.notifyDataSetChanged();
-						mSearchBtn.setClickable(false);
+						
+						//标志位
+						search_flag = true;
 						
 						doDiscovery();
+						}
 					}else{
 						if (mChatService != null) mChatService.stop();
 						mSearchBtn.setText("搜索");
-						//mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_selector));
+						
+						mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_selector));
 						mConversationArrayAdapter.clear();
+						mTab.setVisibility(View.VISIBLE);
 						mSearchPb.setVisibility(View.GONE);
 						mMessagell.setVisibility(View.GONE);
+						mMessagell2.setVisibility(View.GONE);
 						mStatusTv.setText("未连接");
 					}
 				}
@@ -268,6 +281,7 @@ public class FragmentA extends Fragment{
             }
         });
         mMessagell.setVisibility(View.VISIBLE);
+        mMessagell2.setVisibility(View.VISIBLE);
         /*
         sp = this.getSharedPreferences("ButtonInfo", MODE_PRIVATE);
         arrayButton[0] = (Button)findViewById(R.id.play);
@@ -312,6 +326,7 @@ public class FragmentA extends Fragment{
 				long arg3) {
 			mAdapter.cancelDiscovery();
 			mSearchPb.setVisibility(View.VISIBLE);
+			search_flag = false;
 			
 			String info = ((TextView) v).getText().toString();
 
@@ -382,13 +397,14 @@ public class FragmentA extends Fragment{
                 //setTitle(R.string.select_device);
             	
             	mSearchBtn.setClickable(true);
+            	search_flag = false;
+            	
                 if (mDeviceArrayAdapter.getCount() == 0) {
                     //String noDevices = getResources().getText(R.string.none_found_str).toString();
                     //mDeviceArrayAdapter.add(noDevices);
                 	mStatusTv.setText("附近未找到蓝牙设备");
                 	mSearchPb.setVisibility(View.GONE);
                 }else{
-                	
                 }
             }else if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
 				switch(mAdapter.getState()){
@@ -440,6 +456,7 @@ public class FragmentA extends Fragment{
                             mSearchPb.setVisibility(View.GONE);
                             mSearchBtn.setText("断开");
                             //mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_out_selector));
+                            mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_out_selector));
                             mConnectFlag = true;
                             
                             //mConnect.setText(R.string.btn_disconnect);
@@ -476,6 +493,7 @@ public class FragmentA extends Fragment{
                     //Toast.makeText(getApplicationContext(), "Connected to "
                     //        + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                 	mStatusTv.setText(mConnectedDeviceName+"已连接");
+                	mTab.setVisibility(View.GONE);
                     break;
                 case MESSAGE_TOAST:
                     //Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST),
