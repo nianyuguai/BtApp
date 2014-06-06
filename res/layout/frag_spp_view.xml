@@ -3,191 +3,194 @@
     android:id="@+id/frag_spp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:background="#C3C6CB">
-    <LinearLayout 
+    android:background="#C3C6CB"
+    android:orientation="vertical" >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
-    	android:orientation="vertical"
-    	android:background="@drawable/frag_bg_shape" >
-    	<Button 
-    	    android:id="@+id/search_btn"
-    	    android:layout_width="match_parent"
-    	    android:layout_height="40dp"
-    	    android:background="@drawable/btn_selector"
-    	    android:textColor="@android:color/white"
-    	    android:text="@string/search_btn"/>
-    </LinearLayout> 
-    
-    <LinearLayout 
+        android:layout_marginTop="5dp"
+        android:background="@drawable/frag_bg_shape"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/search_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_selector"
+            android:text="@string/search_btn"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/device_info_ll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
-     
-    	android:orientation="vertical"
-    	android:background="@drawable/frag_bg_shape">
-    	
-        <LinearLayout 
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	    	android:orientation="horizontal"
-	    	>
-	    	<TextView
-	            android:layout_width="0dp"
-	        	android:layout_height="wrap_content"
-	        	android:layout_weight="1"
-	        	android:layout_marginTop="8dip"
-	        	android:layout_marginLeft="8dip"
-	        	android:layout_marginBottom="8dip"
-	        	android:text="@string/device_str"
-	        	android:textSize="14sp"/>
-	    	<TextView 
-	    	    android:id="@+id/bt_status"
-	    	    android:layout_width="wrap_content"
-	        	android:layout_height="match_parent"
-	    	    android:layout_marginTop="9dip"
-	    	    android:layout_marginRight="8dp"
-	        	android:layout_marginBottom="9dip"
-	        	android:textColor="#92959A"
-	        	android:textSize="12sp"/>
-	    	<ProgressBar 
-	    	    android:id="@+id/search_pb"
-	    	    android:layout_width="wrap_content"
-	        	android:layout_height="match_parent"
-	        	android:layout_gravity="center_vertical"
-	        	android:layout_marginTop="5dp"
-	        	android:layout_marginRight="8dp"
-	        	android:layout_marginBottom="5dp"
-	        	android:indeterminateDrawable="@drawable/pb_color"
-	        	style="?android:attr/progressBarStyleSmallInverse"
-	        	android:text="@string/device_str"
-	        	android:visibility="gone"
-	        	/>
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:background="@drawable/frag_bg_shape"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dip"
+                android:layout_marginLeft="8dip"
+                android:layout_marginTop="8dip"
+                android:layout_weight="1"
+                android:text="@string/device_str"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/bt_status"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="9dip"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="9dip"
+                android:textColor="#92959A"
+                android:textSize="12sp" />
+
+            <ProgressBar
+                android:id="@+id/search_pb"
+                style="?android:attr/progressBarStyleSmallInverse"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="5dp"
+                android:indeterminateDrawable="@drawable/pb_color"
+                android:text="@string/device_str"
+                android:visibility="gone" />
         </LinearLayout>
-        
-       
+
         <View
-	        android:layout_width="wrap_content"
-	        android:layout_height="1dip"
-			android:layout_marginLeft="5dp"
-			android:layout_marginRight="5dp"
-	        android:background="#DDDEE1" />
-	    <ListView 
-	        android:id="@+id/device_lv"
-	        android:visibility="gone"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        android:layout_marginLeft="5dp"
-	        android:layout_marginTop="5dp"
-	        android:layout_marginRight="5dp"
-	        android:background="@drawable/frag_bg_shape">    
-	    </ListView> 
-	    
-	    <LinearLayout 
-	        android:id="@+id/message_ll"
-	        android:visibility="gone"
-		    android:orientation="vertical"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    >
-		    <ListView android:id="@+id/in"
-		        android:layout_width="match_parent"
-		        android:layout_height="0dp"
-		        android:stackFromBottom="true"
-		        android:transcriptMode="alwaysScroll"
-		        android:layout_weight="1"
-		    />
-    	</LinearLayout>
- 	</LinearLayout>
-	<LinearLayout
-	   android:id="@+id/message_ll2"
-	   android:visibility="gone"
-	   android:layout_gravity="bottom"
-       android:orientation="horizontal"
-       android:layout_width="match_parent"
-       android:layout_height="50dp"
-       android:background="@drawable/bg_shape"
-       >
-       <ImageButton 
-           android:id="@+id/list_btn"
-           android:layout_width="wrap_content"
-           android:layout_height="25dp"
-           android:layout_gravity="center"
-           android:src="@drawable/arrow_up_seletor"
-           android:background="#00000000"/>
-       <EditText 
-           android:id="@+id/edit_text_out"
-           android:layout_width="0dp"
-           android:layout_height="40dp"
-           android:layout_weight="1"
-           android:layout_gravity="center"
-           
-           android:layout_marginTop="3dp"
-           android:layout_marginBottom="3dp"
-           android:paddingLeft="10dip"
-           
-           android:singleLine="true"
-           android:textColorHint="#AAAAAA"
-           android:hint="@string/enter_str"
-           android:background="@drawable/bg_edit"
-       />
-       <Button android:id="@+id/button_send"
-           android:layout_width="wrap_content"
-           android:layout_height="40dp"
-           
-           android:gravity="center"
-           
-           android:layout_marginTop="5dp"
-           android:layout_marginBottom="3dp"
-           android:layout_marginRight="5dp"
-           android:layout_marginLeft="5dp"
-           
-           android:background="@drawable/btn_selector"
-           android:textColor="@android:color/white"
-           android:text="@string/send"
-       />
-   </LinearLayout>
-   <LinearLayout
-        android:id="@+id/msg_btn_ll"
-        android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="1dip"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#DDDEE1" />
+
+        <ListView
+            android:id="@+id/device_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/frag_bg_shape"
+            android:visibility="gone" >
+        </ListView>
+
+        <LinearLayout
+            android:id="@+id/message_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <ListView
+                android:id="@+id/in"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:stackFromBottom="true"
+                android:transcriptMode="alwaysScroll" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/msg_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:background="@drawable/bg_shape">
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="@drawable/bg_shape"
+        >
+    <LinearLayout
+        android:id="@+id/message_ll2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <ImageButton
+            android:id="@+id/list_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:background="#00000000"
+            android:src="@drawable/arrow_up_seletor"
+            android:contentDescription="@string/enter_str"/>
+
+        <EditText
+            android:id="@+id/edit_text_out"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_edit"
+            android:hint="@string/enter_str"
+            android:paddingLeft="10dip"
+            android:singleLine="true"
+            android:textColorHint="#AAAAAA"/>
+
+        <Button
+            android:id="@+id/button_send"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/btn_selector"
+            android:gravity="center"
+            android:text="@string/send"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/msg_btn_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone" >
         <Button
             android:id="@+id/one_btn"
             android:layout_width="0dp"
-            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1.0"
             android:background="@drawable/btn_selector"
             android:text="@string/enter_str"
             android:textColor="@android:color/white"
-            android:textSize="50sp"
-            android:layout_weight="1.0"/>
+            android:textSize="50sp"/>
         <Button
             android:id="@+id/two_btn"
             android:layout_width="0dp"
-             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1.0"
             android:background="@drawable/btn_selector"
-            
             android:text="@string/enter_str"
             android:textColor="@android:color/white"
-            android:textSize="50sp"
-            android:layout_weight="1.0"/>
-      
+            android:textSize="50sp"/>
+    </LinearLayout>
     </LinearLayout>
 </LinearLayout>

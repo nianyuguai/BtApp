@@ -1,13 +1,21 @@
 package nianyu.Bluetooth;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothSocket;
 
 
 public class BluetoothMethod {
+	
+	public static final int TYPE_RFCOMM = 1;  
+    public static final int TYPE_SCO = 2;  
+    public static final int TYPE_L2CAP = 3;  
 	/** 
      * 与设备配对 参考源码：platform/packages/apps/Settings.git 
      * /Settings/src/com/android/settings/bluetooth/CachedBluetoothDevice.java 
@@ -94,5 +102,44 @@ public class BluetoothMethod {
         Boolean returnValue = (Boolean) disconnectMethod.invoke(proxy,btDevice);  
         return returnValue.booleanValue();  
     }
+	
+	
+	 // address must use upper case  
+    public static final BluetoothSocket createBluetoothSocket(int type, int fd,  boolean auth, boolean encrypt, String address, int port)  
+            throws IOException  
+    {  
+        BluetoothSocket socket = null;  
+        try  
+        {  
+            Constructor<BluetoothSocket> cs = BluetoothSocket.class  
+                    .getDeclaredConstructor(int.class, int.class,  
+                            boolean.class, boolean.class, String.class,  
+                            int.class);  
+            if (!cs.isAccessible())  
+            {  
+                cs.setAccessible(true);  
+            }  
+            socket = cs.newInstance(type, fd, auth, encrypt, address, port);  
+        }  
+        catch (SecurityException e)  
+        {  
+        }  
+        catch (NoSuchMethodException e)  
+        {  
+        }  
+        catch (IllegalArgumentException e)  
+        {  
+        }  
+        catch (InstantiationException e)  
+        {  
+        }  
+        catch (IllegalAccessException e)  
+        {  
+        }  
+        catch (InvocationTargetException e)  
+        {  
+        }  
+        return socket;  
+    }  
 
 }

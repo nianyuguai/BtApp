@@ -1,5 +1,7 @@
 package nianyu.View;
 
+import java.io.IOException;
+
 import nianyu.Bluetooth.BluetoothChatService;
 import nianyu.Bluetooth.BluetoothMethod;
 import nianyu.Data.DeviceDao;
@@ -7,6 +9,7 @@ import nianyu.Data.SearchDao;
 import nianyu.btapp.R;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -49,6 +52,7 @@ public class FragmentA extends Fragment{
 	private BluetoothDevice btDevice;
 	private BluetoothReceiver receiver;
 	private BluetoothChatService mChatService = null;
+	private BluetoothSocket mBtSocket;
 	
 	
 	private Context mContext;
@@ -150,7 +154,7 @@ public class FragmentA extends Fragment{
 						if (mChatService != null) mChatService.stop();
 						mSearchBtn.setText("ËÑË÷");
 						
-						mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_selector));
+						mSearchBtn.setBackgroundResource(R.drawable.btn_selector);
 						mConversationArrayAdapter.clear();
 						mTab.setVisibility(View.VISIBLE);
 						mSearchPb.setVisibility(View.GONE);
@@ -216,7 +220,8 @@ public class FragmentA extends Fragment{
 					e.printStackTrace();
 				}
 			}else{
-				setupChat(device);
+				//setupChat(device);
+				hidConnect(device);
 			}
 	}
 	
@@ -229,6 +234,30 @@ public class FragmentA extends Fragment{
 				BluetoothMethod.removeBond(device.getClass(), device);
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void hidConnect(BluetoothDevice device){
+		Log.i(TAG,"hid connect");
+		try {
+			mBtSocket = BluetoothMethod.createBluetoothSocket(BluetoothMethod.TYPE_L2CAP, -1, false, false, device.getAddress(), 0);
+			Log.i(TAG,"hid getsocket");
+			mBtSocket.connect(); 
+			Log.i(TAG,"hid connect()");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally{
+			if(mBtSocket!=null){
+				try {
+					mBtSocket.close();
+					Log.i(TAG,"hid connect fail");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -435,7 +464,8 @@ public class FragmentA extends Fragment{
             	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             	if(device.getBondState()==BluetoothDevice.BOND_BONDED){
             		
-            		setupChat(device);
+            		//setupChat(device);
+            		hidConnect(device);
             		
             	}
             }
@@ -456,7 +486,7 @@ public class FragmentA extends Fragment{
                             mSearchPb.setVisibility(View.GONE);
                             mSearchBtn.setText("¶Ï¿ª");
                             //mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_out_selector));
-                            mSearchBtn.setBackground(getResources().getDrawable(R.drawable.btn_out_selector));
+                            mSearchBtn.setBackgroundResource(R.drawable.btn_out_selector);
                             mConnectFlag = true;
                             
                             //mConnect.setText(R.string.btn_disconnect);

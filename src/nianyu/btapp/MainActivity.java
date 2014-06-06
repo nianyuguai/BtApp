@@ -71,7 +71,7 @@ public class MainActivity extends FragmentActivity {
 				.setContent(R.id.tab1));
 		tabHost.addTab(tabHost.newTabSpec("tabb").setIndicator(mv2)
 				.setContent(R.id.tab2));
-		
+		if(D)Log.i(TAG,"³É¹¦");
 	}
 	
 	
