@@ -1,6 +1,8 @@
 package nianyu.Bluetooth;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,13 +11,17 @@ import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
+import android.os.ParcelUuid;
 
 
 public class BluetoothMethod {
-	
 	public static final int TYPE_RFCOMM = 1;  
-    public static final int TYPE_SCO = 2;  
-    public static final int TYPE_L2CAP = 3;  
+	public static final int TYPE_SCO = 2;  
+	public static final int TYPE_L2CAP = 3;  
+	
+	public static final int CONTROL_CHANNEL = 0x11;
+	public static final int DATA_CHANNEL = 0x13;
+	
 	/** 
      * 与设备配对 参考源码：platform/packages/apps/Settings.git 
      * /Settings/src/com/android/settings/bluetooth/CachedBluetoothDevice.java 
@@ -105,6 +111,7 @@ public class BluetoothMethod {
 	
 	
 	 // address must use upper case  
+	/*
     public static final BluetoothSocket createBluetoothSocket(int type, int fd,  boolean auth, boolean encrypt, String address, int port)  
             throws IOException  
     {  
@@ -141,5 +148,7 @@ public class BluetoothMethod {
         }  
         return socket;  
     }  
+    */
+	
 
 }

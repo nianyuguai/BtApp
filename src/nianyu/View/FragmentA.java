@@ -1,8 +1,10 @@
 package nianyu.View;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import nianyu.Bluetooth.BluetoothChatService;
+import nianyu.Bluetooth.BluetoothHid;
 import nianyu.Bluetooth.BluetoothMethod;
 import nianyu.Data.DeviceDao;
 import nianyu.Data.SearchDao;
@@ -53,7 +55,7 @@ public class FragmentA extends Fragment{
 	private BluetoothReceiver receiver;
 	private BluetoothChatService mChatService = null;
 	private BluetoothSocket mBtSocket;
-	
+	private InputStream istream;
 	
 	private Context mContext;
 	
@@ -240,26 +242,10 @@ public class FragmentA extends Fragment{
 	
 	private void hidConnect(BluetoothDevice device){
 		Log.i(TAG,"hid connect");
-		try {
-			mBtSocket = BluetoothMethod.createBluetoothSocket(BluetoothMethod.TYPE_L2CAP, -1, false, false, device.getAddress(), 0);
-			Log.i(TAG,"hid getsocket");
-			mBtSocket.connect(); 
-			Log.i(TAG,"hid connect()");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally{
-			if(mBtSocket!=null){
-				try {
-					mBtSocket.close();
-					Log.i(TAG,"hid connect fail");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+		
+		mAdapter.cancelDiscovery();
+		
+		BluetoothHid.connectHid(device, BluetoothHid.DATA_CHANNEL);
 	}
 	
 	/**
