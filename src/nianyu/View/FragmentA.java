@@ -8,27 +8,37 @@ import nianyu.Bluetooth.BluetoothHid;
 import nianyu.Bluetooth.BluetoothMethod;
 import nianyu.Data.DeviceDao;
 import nianyu.Data.SearchDao;
+import nianyu.btapp.MainActivity;
 import nianyu.btapp.R;
+import nianyu.btapp.Setting;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -44,7 +54,7 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class FragmentA extends Fragment{
+public class FragmentA extends Fragment implements OnClickListener,OnLongClickListener{
 	
 	private BluetoothAdapter mAdapter;
 	private ArrayAdapter<String> mDeviceArrayAdapter;
@@ -70,7 +80,20 @@ public class FragmentA extends Fragment{
 	private ProgressBar mSearchPb;
 	private LinearLayout mMessagell;
 	private LinearLayout mMessagell2;
+	private LinearLayout mMessageBtn;
 	private TabWidget mTab;
+
+	private Button []arrayButton = new Button[2];
+	private Integer[] Button_id = { R.id.one_btn, R.id.two_btn};
+	private String nameString[]={"Btn1","Btn2",};
+	private String valueString[]={"Btn1value","Btn2value",};
+	
+    private AlertDialog.Builder malertDialog;
+    private String mButton;
+    private String mButtonValue;
+    private SharedPreferences sp;
+    private EditText ename;
+    private EditText emsg;
 	
 	private StringBuffer mOutStringBuffer;
 	private String mConnectedDeviceName;
@@ -98,9 +121,11 @@ public class FragmentA extends Fragment{
 	public void onActivityCreated(Bundle savedInstanceState) {
 		
 		super.onActivityCreated(savedInstanceState);
-		
+		setHasOptionsMenu(true);
 		mMessagell = (LinearLayout)getView().findViewById(R.id.message_ll);
 		mMessagell2 = (LinearLayout)getView().findViewById(R.id.message_ll2);
+		mMessageBtn = (LinearLayout)getView().findViewById(R.id.msg_btn_ll);
+		
 		mSearchPb = (ProgressBar)getView().findViewById(R.id.search_pb);
 		
 		mStatusTv = (TextView)getView().findViewById(R.id.bt_status);
@@ -140,6 +165,7 @@ public class FragmentA extends Fragment{
 						mSearchPb.setVisibility(View.VISIBLE);
 						mMessagell.setVisibility(View.GONE);
 						mMessagell2.setVisibility(View.GONE);
+						mMessageBtn.setVisibility(View.GONE);
 						SearchDao s_dao = new SearchDao(mContext);
 						s_dao.deleteAll();
 						
@@ -162,6 +188,7 @@ public class FragmentA extends Fragment{
 						mSearchPb.setVisibility(View.GONE);
 						mMessagell.setVisibility(View.GONE);
 						mMessagell2.setVisibility(View.GONE);
+						mMessageBtn.setVisibility(View.GONE);
 						mStatusTv.setText("Î´Á¬½Ó");
 					}
 				}
@@ -205,6 +232,30 @@ public class FragmentA extends Fragment{
 		mAdapter.startDiscovery();
 	}
 	
+	
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		loadPref();
+	}
+	
+	private void loadPref(){
+		SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		boolean msg_b = mySharedPreferences.getBoolean("checkbox_edit_pc", false);
+		if(msg_b){
+			Log.i(TAG,"¹þ¹þ¹þ¹þ");
+		}else{
+			Log.i(TAG,"ºÇºÇ");
+		}
+		boolean btn_b = mySharedPreferences.getBoolean("checkbox_btn_pc", false);
+		if(btn_b){
+			Log.i(TAG,"À²À²À²À²");
+		}else{
+			Log.i(TAG,"ÉµÉµ");
+		}
+	}
+
 	private void doPair(String addr){
 		  BluetoothDevice device = mAdapter.getRemoteDevice(addr);
 		  mStatusTv.setText(device.getName()+"ÕýÔÚÅä¶Ô");
@@ -222,8 +273,8 @@ public class FragmentA extends Fragment{
 					e.printStackTrace();
 				}
 			}else{
-				//setupChat(device);
-				hidConnect(device);
+				setupChat(device);
+				//hidConnect(device);
 			}
 	}
 	
@@ -242,8 +293,9 @@ public class FragmentA extends Fragment{
 	
 	private void hidConnect(BluetoothDevice device){
 		Log.i(TAG,"hid connect");
-		
-		mAdapter.cancelDiscovery();
+		if (mAdapter.isDiscovering()) {
+			mAdapter.cancelDiscovery();
+        }
 		
 		BluetoothHid.connectHid(device, BluetoothHid.DATA_CHANNEL);
 	}
@@ -295,7 +347,28 @@ public class FragmentA extends Fragment{
                 sendMessage(message);
             }
         });
+        
+        sp = mContext.getSharedPreferences("ButtonInfo", mContext.MODE_PRIVATE);
+        arrayButton[0] = (Button)getView().findViewById(Button_id[0]);
+        arrayButton[1] = (Button)getView().findViewById(Button_id[1]);
+
+        for(int i=0;i < 2;i++){
+        	if(sp.getString(nameString[i], "").isEmpty()){
+        		arrayButton[i].setTextColor(getResources().getColor(R.color.btncolor));
+        		arrayButton[i].setText(R.string.btn_edit_long);
+        		Log.i(TAG,"empty");
+        	}else{
+        		arrayButton[i].setTextColor(getResources().getColor(android.R.color.white));
+        		arrayButton[i].setText(sp.getString(nameString[i], ""));
+        		Log.i(TAG,"not empty");
+        	}
+            //arrayButton[i].setText(sp.getString(nameString[i], ""));
+            arrayButton[i].setOnClickListener(this);
+            arrayButton[i].setOnLongClickListener(this);
+        }
+        
         mMessagell.setVisibility(View.VISIBLE);
+        mMessageBtn.setVisibility(View.VISIBLE);
         mMessagell2.setVisibility(View.VISIBLE);
         /*
         sp = this.getSharedPreferences("ButtonInfo", MODE_PRIVATE);
@@ -320,6 +393,74 @@ public class FragmentA extends Fragment{
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
     }
+	
+    public void onClick(View v) {
+        // TODO Auto-generated method stub
+        for(int i=0;i<2;i++){
+            if(v.getId() == Button_id[i]){
+                sendMessage(sp.getString(valueString[i], ""));
+                break;
+            }
+        }
+    }
+
+    public boolean onLongClick(View v) {
+        // TODO Auto-generated method stub
+        //int tag = (Integer)v.getTag();
+        for(int i=0;i<2;i++){
+            if(v.getId() == Button_id[i]){
+                buttonSetting(i);
+            }
+        }
+        return true;
+    }
+    
+    public void buttonSetting(final int tag){
+    	LayoutInflater buttonset = LayoutInflater.from(mContext);
+        View view = buttonset.inflate(R.layout.button_set, null);
+        malertDialog = new AlertDialog.Builder(mContext);
+        malertDialog.setTitle(R.string.btn_edit);
+        //LinearLayout buttonset = (LinearLayout)getLayoutInflater().inflate(R.layout.button_set,null);
+        
+        malertDialog.setView(view);
+
+
+        ename = (EditText)view.findViewById(R.id.editName);
+        emsg = (EditText)view.findViewById(R.id.editMsg);
+
+        ename.setText(sp.getString(nameString[tag], ""));
+        emsg.setText(sp.getString(valueString[tag], ""));
+        //ename.setText(sp.getString(key, defValue))
+        malertDialog.setPositiveButton(R.string.sure, new DialogInterface.OnClickListener(){
+
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+            	
+                mButton = ename.getText().toString();
+                mButtonValue = emsg.getText().toString();
+                Editor Edit = sp.edit();
+                Edit.putString(nameString[tag],mButton);
+                Edit.putString(valueString[tag],mButtonValue);
+                Edit.commit();
+                if(mButton.isEmpty()){
+                	arrayButton[tag].setTextColor(getResources().getColor(R.color.btncolor));
+                	arrayButton[tag].setText(R.string.btn_edit_long);
+                }else{
+                	arrayButton[tag].setTextColor(getResources().getColor(android.R.color.white));
+                	arrayButton[tag].setText(mButton);
+                }
+            }
+        });
+        malertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+        malertDialog.create().show();
+    }
+	
 	// The action listener for the EditText widget, to listen for the return key
     private TextView.OnEditorActionListener mWriteListener =new TextView.OnEditorActionListener() {
 				@Override
@@ -383,7 +524,27 @@ public class FragmentA extends Fragment{
 		return super.onContextItemSelected(item);
 	}
 	
-    private class BluetoothReceiver extends BroadcastReceiver{
+	@Override
+	public void onCreateOptionsMenu(Menu menu,MenuInflater inflater) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getActivity().getMenuInflater().inflate(R.menu.main, menu);
+		
+	}
+	
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+    	
+    	Log.d(TAG,"item");
+    	Intent intent = new Intent();
+		intent.setClass(getActivity(), Setting.class);
+		getActivity().startActivityForResult(intent, 0); 
+		return true;
+	}
+
+
+
+	private class BluetoothReceiver extends BroadcastReceiver{
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -450,8 +611,8 @@ public class FragmentA extends Fragment{
             	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             	if(device.getBondState()==BluetoothDevice.BOND_BONDED){
             		
-            		//setupChat(device);
-            		hidConnect(device);
+            		setupChat(device);
+            		//hidConnect(device);
             		
             	}
             }

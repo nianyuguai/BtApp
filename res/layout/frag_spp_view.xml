@@ -3,7 +3,7 @@
     android:id="@+id/frag_spp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C3C6CB"
+    android:background="@color/btncolor"
     android:orientation="vertical" >
     <LinearLayout
         android:layout_width="match_parent"
@@ -121,21 +121,13 @@
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:visibility="gone" >
-
-        <ImageButton
-            android:id="@+id/list_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:background="#00000000"
-            android:src="@drawable/arrow_up_seletor"
-            android:contentDescription="@string/enter_str"/>
-
+ 
         <EditText
             android:id="@+id/edit_text_out"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
             android:layout_marginBottom="3dp"
             android:layout_marginTop="3dp"
             android:layout_weight="1"
@@ -168,7 +160,7 @@
         <Button
             android:id="@+id/one_btn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
@@ -177,11 +169,11 @@
             android:background="@drawable/btn_selector"
             android:text="@string/enter_str"
             android:textColor="@android:color/white"
-            android:textSize="50sp"/>
+            android:textSize="25sp"/>
         <Button
             android:id="@+id/two_btn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
@@ -190,7 +182,7 @@
             android:background="@drawable/btn_selector"
             android:text="@string/enter_str"
             android:textColor="@android:color/white"
-            android:textSize="50sp"/>
+            android:textSize="25sp"/>
     </LinearLayout>
     </LinearLayout>
 </LinearLayout>

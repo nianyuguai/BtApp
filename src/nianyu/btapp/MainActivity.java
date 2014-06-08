@@ -6,12 +6,16 @@ import java.util.TimerTask;
 
 import nianyu.View.TabMenuView;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.TabHost;
 import android.widget.Toast;
@@ -20,6 +24,10 @@ import android.widget.TabHost.OnTabChangeListener;
 public class MainActivity extends FragmentActivity {
 	private String TAG = "BtMain";
 	private boolean isQuit = false;
+	
+	public static String MSG_EDIT = "msg_edit_set";
+	public static String BTN_EDIT = "msg_btn_set";
+	
 	private boolean D = true;
 	//¿∂—¿œ‡πÿ
 	BluetoothAdapter mBluetoothAdapter = null;
@@ -29,6 +37,9 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		//PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		
 		if(D)Log.d(TAG,"-- onCreate --");
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		//ªÒ»°¿∂—¿  ≈‰∆˜
@@ -98,7 +109,7 @@ public class MainActivity extends FragmentActivity {
 		super.onDestroy();
 		
 	}
-
+/*
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -106,6 +117,9 @@ public class MainActivity extends FragmentActivity {
 		return true;
 	}
 	
+*/
+
+
 	Timer timer = new Timer();
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+        android:title="@string/screen_set">
+        <CheckBoxPreference
+            android:key="checkbox_edit_pc"
+            android:title="@string/msg_edit_set"
+            android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:key="checkbox_btn_pc"
+            android:title="@string/msg_msg_set"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

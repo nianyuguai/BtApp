@@ -45,7 +45,7 @@ public class BluetoothHid {
 			
 			
 			static public void connectHid(BluetoothDevice device,int channel){
-				BluetoothSocket socket = BluetoothHid.createL2CAPBluetoothSocket(device, channel);
+				BluetoothSocket socket = createL2CAPBluetoothSocket(device, channel);
 				Log.i(TAG,"hid socket");
 				try {
 					socket.connect();
@@ -104,7 +104,7 @@ public class BluetoothHid {
 					while(true){
 						try {
 							bytes = is.read(buffer);
-							Log.i(TAG, "Msg: ");
+							Log.i(TAG, "Msg: "+bytes);
 							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
