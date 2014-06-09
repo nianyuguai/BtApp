@@ -86,9 +86,7 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	
-	
-	
-	
+
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub

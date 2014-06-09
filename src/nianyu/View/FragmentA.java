@@ -73,6 +73,9 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
 	private boolean receiver_flag  = false;
 	private boolean search_flag = false;
 	
+	public boolean edit_pc	= false;
+	public boolean btn_pc	= false;
+	
 	private Button mSearchBtn = null;
 	private TextView mStatusTv = null;
 	private EditText mOutEditText;
@@ -234,27 +237,7 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
 	
 	
 	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		loadPref();
-	}
-	
-	private void loadPref(){
-		SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		boolean msg_b = mySharedPreferences.getBoolean("checkbox_edit_pc", false);
-		if(msg_b){
-			Log.i(TAG,"¹þ¹þ¹þ¹þ");
-		}else{
-			Log.i(TAG,"ºÇºÇ");
-		}
-		boolean btn_b = mySharedPreferences.getBoolean("checkbox_btn_pc", false);
-		if(btn_b){
-			Log.i(TAG,"À²À²À²À²");
-		}else{
-			Log.i(TAG,"ÉµÉµ");
-		}
-	}
+
 
 	private void doPair(String addr){
 		  BluetoothDevice device = mAdapter.getRemoteDevice(addr);
@@ -367,9 +350,11 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
             arrayButton[i].setOnLongClickListener(this);
         }
         
+        loadPref();
+        
         mMessagell.setVisibility(View.VISIBLE);
-        mMessageBtn.setVisibility(View.VISIBLE);
-        mMessagell2.setVisibility(View.VISIBLE);
+        if(btn_pc)mMessageBtn.setVisibility(View.VISIBLE);
+        if(edit_pc)mMessagell2.setVisibility(View.VISIBLE);
         /*
         sp = this.getSharedPreferences("ButtonInfo", MODE_PRIVATE);
         arrayButton[0] = (Button)findViewById(R.id.play);
@@ -534,15 +519,52 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-    	
-    	Log.d(TAG,"item");
-    	Intent intent = new Intent();
-		intent.setClass(getActivity(), Setting.class);
-		getActivity().startActivityForResult(intent, 0); 
-		return true;
+    	switch(item.getItemId()){
+    	case R.id.action_settings:
+    		Log.d(TAG,"item");
+        	Intent intent = new Intent();
+    		intent.setClass(mContext, Setting.class);
+    		startActivityForResult(intent, 0); 
+    		return true;
+    	case R.id.msg_clr:
+    		if(mConnectFlag)mConversationArrayAdapter.clear();
+    		return true;
+    	}
+    	return false;
 	}
 
-
+    @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+    	//super.onActivityResult(requestCode, resultCode, data);
+    	loadPref();
+	}
+    
+	private void loadPref(){
+		SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		edit_pc = mySharedPreferences.getBoolean("checkbox_edit_pc", false);
+		if(edit_pc&&mConnectFlag){
+			mMessagell2.setVisibility(View.VISIBLE);
+		}else{
+			mMessagell2.setVisibility(View.GONE);
+		}
+		/*if(edit_pc){
+			Log.i(TAG,"¹þ¹þ¹þ¹þ");
+		}else{
+			Log.i(TAG,"ºÇºÇ");
+		}*/
+		btn_pc = mySharedPreferences.getBoolean("checkbox_btn_pc", false);
+		if(btn_pc&&mConnectFlag){
+			mMessageBtn.setVisibility(View.VISIBLE);
+		}else{
+			mMessageBtn.setVisibility(View.GONE);
+		}
+		/*if(btn_pc){
+			Log.i(TAG,"À²À²À²À²");
+		}else{
+			Log.i(TAG,"ÉµÉµ");
+		}*/
+	}
 
 	private class BluetoothReceiver extends BroadcastReceiver{
 
@@ -555,6 +577,9 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed already
+                Bundle mBundle = intent.getExtras();
+                int classValue = hexStringToAlgorism(String.valueOf(mBundle.get("android.bluetooth.device.extra.CLASS")));
+                
                 
                 //if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
              
@@ -562,8 +587,9 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
                 	String addr = device.getAddress();
 				    String name = device.getName();
 				    if(!s_dao.find(addr)){
-				    	 mDeviceArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+				    	 mDeviceArrayAdapter.add(device.getName()  +"(ÐÅºÅ:"+String.valueOf(mBundle.get("android.bluetooth.device.extra.RSSI"))+ "dB"+")"+"\n" + device.getAddress());
 		                 Log.i(TAG, "Receive "+device.getName() + "  " + device.getAddress());
+		                 Log.i(TAG,"Éè±¸ÀàÐÍ: "+ device.getName() + "  "+classValue);
 				    	 s_dao.add(name, addr, 0, 0, 0);
 				    }
                 	
@@ -679,6 +705,30 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
             }
         }
     };
+    
+    /**
+     * Ê®Áù½øÖÆ×Ö·û´®×°Ê®½øÖÆ
+     * 
+     * @param hex
+     *            Ê®Áù½øÖÆ×Ö·û´®
+     * @return Ê®½øÖÆÊýÖµ
+     */
+    public static int hexStringToAlgorism(String hex) {
+        hex = hex.toUpperCase();
+        int max = hex.length();
+        int result = 0;
+        for (int i = max; i > 0; i--) {
+            char c = hex.charAt(i - 1);
+            int algorism = 0;
+            if (c >= '0' && c <= '9') {
+                algorism = c - '0';
+            } else {
+                algorism = c - 55;
+            }
+            result += Math.pow(16, max - i) * algorism;
+        }
+        return result;
+    }
    
 
 }

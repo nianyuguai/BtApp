@@ -10,7 +10,7 @@
         <CheckBoxPreference
             android:key="checkbox_btn_pc"
             android:title="@string/msg_msg_set"
-            android:defaultValue="true"/>
+            android:defaultValue="false"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

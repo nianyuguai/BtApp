@@ -10,4 +10,10 @@
         android:showAsAction="ifRoom|withText"
         android:icon="@drawable/search_bt"
         android:title="@string/bt_search"/> -->
+        
+        <item
+	    android:id="@+id/msg_clr"
+        android:showAsAction="ifRoom|withText"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/msg_clr_str"/>
 </menu>

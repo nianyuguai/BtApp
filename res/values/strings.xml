@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">BtApp</string>
+    <string name="app_name">蓝牙APP</string>
     <string name="action_settings">设置</string>
     <string name="hello_world">Hello world!</string>
     <string name="send">发送</string>
@@ -22,6 +22,7 @@
     <string name="other_str">其他</string>
     <string name="device_str">设备信息</string>
     <string name="none_found_str">设备没找到</string>
+    <string name="msg_clr_str">清空</string>
     
      <string name="another_str">还没其他</string>
      
