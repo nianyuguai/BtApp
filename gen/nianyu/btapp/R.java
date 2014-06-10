@@ -66,6 +66,7 @@ public final class R {
         public static final int message_ll=0x7f0b000a;
         public static final int message_ll2=0x7f0b000d;
         public static final int msg_btn_ll=0x7f0b0010;
+        public static final int msg_clr=0x7f0b001a;
         public static final int msg_ll=0x7f0b000c;
         public static final int one_btn=0x7f0b0011;
         public static final int search_btn=0x7f0b0005;
@@ -93,9 +94,9 @@ public final class R {
     }
     public static final class string {
         public static final int action_settings=0x7f080001;
-        public static final int another_str=0x7f080013;
+        public static final int another_str=0x7f080014;
         public static final int app_name=0x7f080000;
-        public static final int bt_search=0x7f080014;
+        public static final int bt_search=0x7f080015;
         public static final int btn_edit=0x7f080007;
         public static final int btn_edit_long=0x7f080008;
         public static final int button_msg=0x7f080006;
@@ -105,12 +106,13 @@ public final class R {
         public static final int enter_str=0x7f080004;
         public static final int hello_world=0x7f080002;
         public static final int iv_txt=0x7f08000e;
+        public static final int msg_clr_str=0x7f080013;
         public static final int msg_edit_set=0x7f08000c;
         public static final int msg_msg_set=0x7f08000d;
         public static final int none_found_str=0x7f080012;
         public static final int other_str=0x7f080010;
         public static final int screen_set=0x7f08000b;
-        public static final int search_btn=0x7f080015;
+        public static final int search_btn=0x7f080016;
         public static final int send=0x7f080003;
         public static final int spp_str=0x7f08000f;
         public static final int sure=0x7f080009;

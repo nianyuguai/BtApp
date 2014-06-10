@@ -287,9 +287,13 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
 		if(btHid!=null){
 			btHid.stop();
 		}
+		btHid = new BluetoothHid(mContext);
+		
 		Log.i(TAG,"hid start");
+		btHid.connectHid(device, BluetoothHid.CONTROL_CHANNEL);
+		
 		btHid.connectHid(device, BluetoothHid.DATA_CHANNEL);
-		Log.i(TAG,"hid start");
+		Log.i(TAG,"hid start3");
 	}
 	
 	/**

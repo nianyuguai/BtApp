@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -26,6 +28,7 @@ public class BluetoothHid {
 			
 			private ConnectedHidThread mConnectedThread;
 			private ConnectHidThread mConnectThread;
+			private BluetoothAdapter mAdapter; 
 /*
 			static public BluetoothSocket createL2CAPBluetoothSocket(BluetoothDevice device, final int channel) {
 		        int type = TYPE_L2CAP; // L2CAP protocol
@@ -47,6 +50,12 @@ public class BluetoothHid {
 		    }
 	*/
 			
+			public BluetoothHid(Context context){
+				mAdapter = BluetoothAdapter.getDefaultAdapter();
+				if(D)Log.i(TAG,"construtor");
+			}
+			
+			
 			public synchronized void stop(){
 				if(D)Log.d(TAG,"BluetoothHid stop()");
 				if(mConnectedThread!=null){
@@ -61,6 +70,16 @@ public class BluetoothHid {
 			}
 			
 			public synchronized void connectedHid(BluetoothSocket socket,BluetoothDevice device){
+				if(mConnectedThread!=null){
+					mConnectedThread.cancel();
+					mConnectedThread = null;
+				}
+				if(mConnectThread!=null){
+					mConnectThread.cancel();
+					mConnectThread = null;
+				}
+				mConnectedThread = new ConnectedHidThread(socket);
+				mConnectedThread.start();
 				
 			}
 			
@@ -92,6 +111,7 @@ public class BluetoothHid {
 				
 				mConnectThread = new ConnectHidThread(device,channel);
 				mConnectThread.start();
+				if(D)Log.i(TAG,"connectHid()");
 				
 			}
 			
@@ -135,7 +155,7 @@ public class BluetoothHid {
 						mConnectThread = null;
 					}
 					
-					connected(mSocket,mDevice);
+					connectedHid(mSocket,mDevice);
 				}
 				
 				public void cancel(){
