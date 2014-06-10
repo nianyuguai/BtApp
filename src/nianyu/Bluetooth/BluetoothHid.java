@@ -6,12 +6,14 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
 
 public class BluetoothHid {
 			private static String TAG = "BluetoothHid";
-	
+			private boolean D = true;
+			
 			public static final int TYPE_RFCOMM = 1;  
 			public static final int TYPE_SCO = 2;  
 			public static final int TYPE_L2CAP = 3;  
@@ -22,8 +24,9 @@ public class BluetoothHid {
 			//private BluetoothSocket controlSocket;
 			//private BluetoothSocket dataSocket;
 			
-			private static ConnectedHidThread mHidThread;
-
+			private ConnectedHidThread mConnectedThread;
+			private ConnectHidThread mConnectThread;
+/*
 			static public BluetoothSocket createL2CAPBluetoothSocket(BluetoothDevice device, final int channel) {
 		        int type = TYPE_L2CAP; // L2CAP protocol
 		        int fd = -1; // Create a new socket
@@ -42,34 +45,110 @@ public class BluetoothHid {
 		            return null;
 		        }
 		    }
+	*/
+			
+			public synchronized void stop(){
+				if(D)Log.d(TAG,"BluetoothHid stop()");
+				if(mConnectedThread!=null){
+					mConnectedThread.cancel();
+					mConnectedThread = null;
+				}
+				if(mConnectThread!=null){
+					mConnectThread.cancel();
+					mConnectThread = null;
+				}
+				
+			}
+			
+			public synchronized void connectedHid(BluetoothSocket socket,BluetoothDevice device){
+				
+			}
 			
 			
-			static public void connectHid(BluetoothDevice device,int channel){
-				BluetoothSocket socket = createL2CAPBluetoothSocket(device, channel);
-				Log.i(TAG,"hid socket");
+			public static BluetoothSocket createL2CAPBluetoothSocket(String address,int psm){
+				return createBluetoothSocket(TYPE_L2CAP,-1,false,false,address,psm);
+			}
+			
+			private static BluetoothSocket createBluetoothSocket(int type,int fd,boolean auth,boolean encrypt,String address,int port){
 				try {
-					socket.connect();
-					Log.i(TAG,"hid socket connect");
+		            Constructor<BluetoothSocket> constructor = BluetoothSocket.class.getDeclaredConstructor(
+		                    int.class, int.class,boolean.class,boolean.class,String.class, int.class);
+		            constructor.setAccessible(true);
+		            BluetoothSocket clientSocket = (BluetoothSocket) 
+		                constructor.newInstance(type,fd,auth,encrypt,address,port);
+		            return clientSocket;
+		        }catch (Exception e) { return null; }
+			}
+			
+			public synchronized void connectHid(BluetoothDevice device,int channel){
+				if(mConnectedThread!=null){
+					mConnectedThread.cancel();
+					mConnectedThread = null;
+				}
+				if(mConnectThread!=null){
+					mConnectThread.cancel();
+					mConnectThread = null;
+				}
+				
+				mConnectThread = new ConnectHidThread(device,channel);
+				mConnectThread.start();
+				
+			}
+			
+			
+			private class ConnectHidThread extends Thread{
+				private BluetoothSocket mSocket;
+				private BluetoothDevice mDevice;
+				
+				public ConnectHidThread(BluetoothDevice device,int channel){
+					mDevice = device;
 					
-					BluetoothHid bt_hid = new BluetoothHid();
-					mHidThread = bt_hid.new ConnectedHidThread(socket);
-					Log.i(TAG,"new thread");
-					bt_hid.mHidThread.start();
-					Log.i(TAG,"thread start");
+					BluetoothSocket tmp	= null;
 					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					if(socket!=null)
+					tmp = createL2CAPBluetoothSocket(device.getAddress(), channel);
+					if(D)Log.i(TAG,"ConnnectThread: createL2CPBluetoothSocket");
+					mSocket = tmp;
+				}
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					setName("ConnectHidThread");
+					try {
+						mSocket.connect();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 						try {
-							socket.close();
-							Log.i(TAG,"hid socket close");
+							mSocket.close();
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
-							Log.i(TAG,"hid socket fail");
 							e1.printStackTrace();
+							if(D)Log.e(TAG,"ConnnectThread: unable to close() socket during connection failure",e1);
 						}
-					e.printStackTrace();
+						
+						BluetoothHid.this.stop();
+						return;
+					}
+					
+					synchronized (BluetoothHid.this){
+						mConnectThread = null;
+					}
+					
+					connected(mSocket,mDevice);
 				}
+				
+				public void cancel(){
+					try {
+						mSocket.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						Log.e(TAG, "ConnnectThread: close() of connect socket failed", e);
+					}
+				}
+				
+				
 			}
 			
 			
@@ -116,7 +195,18 @@ public class BluetoothHid {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
+							BluetoothHid.this.stop();
+							return;
 						}
+					}
+				}
+				
+				public void cancel(){
+					try {
+						mSocket.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 				

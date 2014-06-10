@@ -103,6 +103,8 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
 	private String TAG = "FragmentA";
 	private static final int MENU_CANCEL_PAIRED = 1;
 	
+	private BluetoothHid btHid = null;
+	
 	// Message types sent from the BluetoothChatService Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
     public static final int MESSAGE_READ = 2;
@@ -196,6 +198,9 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
 					}
 				}
 			});
+		
+			PreferenceManager.setDefaultValues(mContext, R.xml.preferences, false);
+			loadPref();
 		 
 	}
 
@@ -256,8 +261,8 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
 					e.printStackTrace();
 				}
 			}else{
-				setupChat(device);
-				//hidConnect(device);
+				//setupChat(device);
+				hidConnect(device);
 			}
 	}
 	
@@ -279,8 +284,12 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
 		if (mAdapter.isDiscovering()) {
 			mAdapter.cancelDiscovery();
         }
-		
-		BluetoothHid.connectHid(device, BluetoothHid.DATA_CHANNEL);
+		if(btHid!=null){
+			btHid.stop();
+		}
+		Log.i(TAG,"hid start");
+		btHid.connectHid(device, BluetoothHid.DATA_CHANNEL);
+		Log.i(TAG,"hid start");
 	}
 	
 	/**
@@ -637,8 +646,8 @@ public class FragmentA extends Fragment implements OnClickListener,OnLongClickLi
             	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             	if(device.getBondState()==BluetoothDevice.BOND_BONDED){
             		
-            		setupChat(device);
-            		//hidConnect(device);
+            		//setupChat(device);
+            		hidConnect(device);
             		
             	}
             }
