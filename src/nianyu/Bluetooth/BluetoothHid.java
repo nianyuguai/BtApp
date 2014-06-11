@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+
+import android.bluetooth.BluetoothServerSocket;
 import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
@@ -84,10 +89,87 @@ public class BluetoothHid {
 			}
 			
 			
+			/*
+			public static BluetoothServerSocket createBluetoothServerSocket(String address,int psm){
+				return createBluetoothServerSocket(TYPE_L2CAP,-1,false,false,address,psm);
+			}
+			
+			private static BluetoothServerSocket createBluetoothServerSocket(int type,int fd,boolean auth,boolean encrypt,String address,int port){
+				try {
+		            Constructor<BluetoothServerSocket> constructor = BluetoothServerSocket.class.getDeclaredConstructor(
+		                    int.class, int.class,boolean.class,boolean.class,String.class, int.class);
+		            constructor.setAccessible(true);
+		            BluetoothServerSocket clientSocket = (BluetoothServerSocket) 
+		                constructor.newInstance(type,fd,auth,encrypt,address,port);
+		            
+		            
+		            
+		            return clientSocket;
+		        }catch (Exception e) { return null; }
+			}
+			
+			
+			private static void bindListen(BluetoothServerSocket serverSocket)
+					throws SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException{
+				BluetoothSocket localBluetoothSocket = getSocket(serverSocket);
+			    Method localMethod = BluetoothSocket.class.getDeclaredMethod("bindListen", new Class[0]);
+			    localMethod.setAccessible(true);
+			    int i = ((Integer)localMethod.invoke(localBluetoothSocket, new Object[0])).intValue();
+			    if (i != 0);
+			    try
+			    {
+			    	serverSocket.close();
+			    	throwErrnoNative(localBluetoothSocket, i);
+			    	return;
+			    }
+			    catch (IOException localIOException)
+			    {
+			    }
+			}
+			
+			private static BluetoothSocket getSocket(BluetoothServerSocket serverSocket)
+				    throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException
+				  {
+				    Field localField = BluetoothServerSocket.class.getDeclaredField("mSocket");
+				    localField.setAccessible(true);
+				    return ((BluetoothSocket)localField.get(serverSocket));
+				  }
+			
+			private static void throwErrnoNative(BluetoothSocket paramBluetoothSocket, int paramInt)
+				    throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
+				  {
+				    Class[] arrayOfClass = new Class[1];
+				    arrayOfClass[0] = Integer.TYPE;
+				    Method localMethod = BluetoothSocket.class.getDeclaredMethod("throwErrnoNative", arrayOfClass);
+				    localMethod.setAccessible(true);
+				    Object[] arrayOfObject = new Object[1];
+				    arrayOfObject[0] = Integer.valueOf(paramInt);
+				    localMethod.invoke(paramBluetoothSocket, arrayOfObject);
+				  }
+			*/
+			/*
 			public static BluetoothSocket createL2CAPBluetoothSocket(String address,int psm){
 				return createBluetoothSocket(TYPE_L2CAP,-1,false,false,address,psm);
 			}
 			
+			 private static BluetoothSocket createBluetoothSocket(int type,int fd,boolean auth,boolean encrypt,String address,int port)
+			  {
+			    try
+			    {
+			    	Constructor<BluetoothSocket> constructor = BluetoothSocket.class.getDeclaredConstructor(
+		                    int.class, int.class,boolean.class,boolean.class,String.class, int.class);
+		            constructor.setAccessible(true);
+		            BluetoothSocket clientSocket = (BluetoothSocket) 
+		                constructor.newInstance(type,fd,auth,encrypt,address,port);
+		            return clientSocket;
+			    }
+			    catch (Exception localException)
+			    {
+			    }
+			    return null;
+			  }
+			*/
+			/*
 			private static BluetoothSocket createBluetoothSocket(int type,int fd,boolean auth,boolean encrypt,String address,int port){
 				try {
 		            Constructor<BluetoothSocket> constructor = BluetoothSocket.class.getDeclaredConstructor(
@@ -98,7 +180,7 @@ public class BluetoothHid {
 		            return clientSocket;
 		        }catch (Exception e) { return null; }
 			}
-			
+			*/
 			public synchronized void connectHid(BluetoothDevice device,int channel){
 				if(mConnectedThread!=null){
 					mConnectedThread.cancel();
@@ -119,15 +201,20 @@ public class BluetoothHid {
 			private class ConnectHidThread extends Thread{
 				private BluetoothSocket mSocket;
 				private BluetoothDevice mDevice;
+				private BluetoothSocket controlSocket;
+				private BluetoothSocket dataSocket;
 				
 				public ConnectHidThread(BluetoothDevice device,int channel){
 					mDevice = device;
 					
 					BluetoothSocket tmp	= null;
 					
-					tmp = createL2CAPBluetoothSocket(device.getAddress(), channel);
+					//tmp = BluetoothMethod.createL2CAPBluetoothSocket(device, channel);
+					controlSocket = BluetoothMethod.createL2CAPBluetoothSocket(device, BluetoothMethod.CONTROL_CHANNEL);
+					dataSocket = BluetoothMethod.createL2CAPBluetoothSocket(device, BluetoothMethod.DATA_CHANNEL);
+					mSocket = dataSocket;
 					if(D)Log.i(TAG,"ConnnectThread: createL2CPBluetoothSocket");
-					mSocket = tmp;
+					//mSocket = tmp;
 				}
 
 				@Override
@@ -135,12 +222,17 @@ public class BluetoothHid {
 					// TODO Auto-generated method stub
 					setName("ConnectHidThread");
 					try {
-						mSocket.connect();
+						//mSocket.connect();
+						controlSocket.connect();
+						dataSocket.connect();
+						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						try {
-							mSocket.close();
+							//mSocket.close();
+							controlSocket.close();
+							dataSocket.close();
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -177,13 +269,14 @@ public class BluetoothHid {
 				private InputStream is;
 				private BluetoothSocket mSocket;
 				
-				public ConnectedHidThread(BluetoothSocket socket){
+				public ConnectedHidThread(BluetoothSocket dataSocket){
 					Log.i(TAG, "create ConnectedHidThread");
 					InputStream tmpIn = null;
-					mSocket = socket;
+		
+					mSocket = dataSocket;
 					
 					try {
-						is = socket.getInputStream();
+						is = dataSocket.getInputStream();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -203,7 +296,7 @@ public class BluetoothHid {
 					while(true){
 						try {
 							bytes = is.read(buffer);
-							Log.i(TAG, "Msg: "+bytes);
+							Log.i(TAG, "Msg: "+String.valueOf(bytes));
 							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block

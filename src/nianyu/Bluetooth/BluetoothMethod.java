@@ -22,6 +22,9 @@ public class BluetoothMethod {
 	public static final int CONTROL_CHANNEL = 0x11;
 	public static final int DATA_CHANNEL = 0x13;
 	
+	private static BluetoothSocket controlSocket;
+	private static BluetoothSocket dataSocket;
+	
 	/** 
      * 与设备配对 参考源码：platform/packages/apps/Settings.git 
      * /Settings/src/com/android/settings/bluetooth/CachedBluetoothDevice.java 
@@ -109,6 +112,43 @@ public class BluetoothMethod {
         return returnValue.booleanValue();  
     }
 	
+	
+	static public BluetoothSocket createL2CAPBluetoothSocket(BluetoothDevice device,int psm){
+		return createBluetoothSocket(TYPE_L2CAP,-1,false,false,device,psm);
+	}
+	
+	private static BluetoothSocket createBluetoothSocket(int type,int fd,boolean auth,boolean encrypt,BluetoothDevice device,int port)
+	  {
+	    try
+	    {
+            Constructor<BluetoothSocket> constructor = BluetoothSocket.class.getDeclaredConstructor(int.class,
+                    int.class, boolean.class, boolean.class, BluetoothDevice.class, int.class, ParcelUuid.class);
+            constructor.setAccessible(true);
+            BluetoothSocket clientSocket = (BluetoothSocket) constructor.newInstance(type, fd, auth, encrypt, device,
+            		port, null);
+            return clientSocket;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+	    }
+	  }
+	
+	static public void connect(BluetoothDevice device) {
+	    try {
+	        controlSocket = createL2CAPBluetoothSocket(device, CONTROL_CHANNEL);        
+	        controlSocket.connect();
+	        //os = controlSocket.getOutputStream();
+
+	        dataSocket = createL2CAPBluetoothSocket(device, DATA_CHANNEL);
+	        dataSocket.connect();
+	        //is = dataSocket.getInputStream();      
+
+	        // open transmit & receive threads for input and output streams appropriately
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
 	
 	 // address must use upper case  
 	/*
